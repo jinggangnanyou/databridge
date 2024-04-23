@@ -1,8 +1,6 @@
 module github.com/jinggangnanyou/databridge
 
-go 1.21
-
-toolchain go1.22.2
+go 1.22.2
 
 require (
 	github.com/IBM/sarama v1.43.1
