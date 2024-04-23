@@ -16,14 +16,14 @@ const (
 
 type MinioConfig struct {
 	Enabled         bool   `yaml:"enabled"`
-	EndPoint        string `yaml:"endpoint"`
+	Endpoint        string `yaml:"endpoint"`
 	AccessKeyID     string `yaml:"access_key_id"`
 	SecretAccessKey string `yaml:"secret_access_key"`
 	UseSSL          bool   `yaml:"use_ssl"`
 }
 
 func InitMinioClient(minioConfig *MinioConfig) (*minio.Client, error) {
-	minioClient, err := minio.New(minioConfig.EndPoint, &minio.Options{
+	minioClient, err := minio.New(minioConfig.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(minioConfig.AccessKeyID, minioConfig.SecretAccessKey, ""),
 		Secure: minioConfig.UseSSL,
 		Region: Region,
