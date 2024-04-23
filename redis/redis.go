@@ -10,13 +10,13 @@ import (
 
 type RedisConfig struct {
 	Addr           string `yaml:"addr"`
+	User           string `yaml:"user"`
 	Password       string `yaml:"password"`
 	DB             int    `yaml:"db"`
 	SentinelEnable bool   `yaml:"sentinel_enable"`
 	SentinelHosts  string `yaml:"sentinel_hosts"`
 	SentinelPort   int    `yaml:"sentinel_port"`
 	MasterName     string `yaml:"master_name"`
-	User           string `yaml:"user"`
 	DefaultQueue   string `yaml:"default_queue"`
 }
 
@@ -32,6 +32,7 @@ func InitRedis(cfg *RedisConfig) *redis.Client {
 func initClient(cfg *RedisConfig) *redis.Client {
 	return redis.NewClient(&redis.Options{
 		Addr:         cfg.Addr,
+		Username:     cfg.User,
 		Password:     cfg.Password,
 		DB:           cfg.DB,
 		MinIdleConns: 5,
@@ -50,6 +51,7 @@ func initFailoverClient(cfg *RedisConfig) *redis.Client {
 	return redis.NewFailoverClient(&redis.FailoverOptions{
 		MasterName:    cfg.MasterName,
 		SentinelAddrs: sentinelAddr,
+		Username:      cfg.User,
 		Password:      cfg.Password,
 		DB:            cfg.DB,
 		MinIdleConns:  5,
