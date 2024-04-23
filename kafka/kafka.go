@@ -10,11 +10,12 @@ import (
 )
 
 const (
-	clientID               = "gitee-code-kafka"
-	defaultMessageMaxBytes = "20971520"
+	defaultMessageMaxBytes = 20971520
 )
 
 type KafkaConfig struct {
+	ClientID          string `yaml:"client_id"`
+	MaxMessageBytes   int    `yaml:"max_message_bytes"`
 	Host              string `yaml:"host"`
 	SaslEnabled       bool   `yaml:"sasl_enabled"`
 	SaslUsername      string `yaml:"sasl_username"`
@@ -32,15 +33,11 @@ type AdminClient struct {
 
 func (cf *KafkaConfig) newConfig() *sarama.Config {
 	config := sarama.NewConfig()
-	config.ClientID = clientID
+	config.ClientID = cf.ClientID
 	config.Producer.RequiredAcks = sarama.WaitForAll
 	config.Producer.Partitioner = sarama.NewRandomPartitioner
 	config.Producer.Return.Successes = true
-	maxMessageBytes, err := strconv.Atoi(defaultMessageMaxBytes)
-	if err != nil {
-		maxMessageBytes = 20971520 // 20MB
-	}
-	config.Producer.MaxMessageBytes = maxMessageBytes
+	config.Producer.MaxMessageBytes = cf.MaxMessageBytes
 	if cf.SaslEnabled {
 		config.Net.SASL.Enable = true
 		config.Net.SASL.User = cf.SaslUsername
@@ -67,6 +64,11 @@ func (cf *KafkaConfig) newClusterAdmin() (AdminClient, error) {
 }
 
 func InitKafka(kafka *KafkaConfig, topicNames []string) error {
+	messageMaxBytes := defaultMessageMaxBytes // 20MB
+	if kafka.MaxMessageBytes <= 0 {
+		kafka.MaxMessageBytes = messageMaxBytes
+	}
+	messageMaxBytesStr := strconv.Itoa(kafka.MaxMessageBytes)
 	clusterAdmin, err := kafka.newClusterAdmin()
 	if err != nil {
 		return err
@@ -80,13 +82,13 @@ func InitKafka(kafka *KafkaConfig, topicNames []string) error {
 	for _, topicName := range topicNames {
 		if _, exists := clusterTopics[topicName]; exists {
 			// alert config
-			err = clusterAdmin.alertMaxMessageBytes(topicName)
+			err = clusterAdmin.alertMaxMessageBytes(topicName, messageMaxBytesStr)
 			if err != nil {
 				fmt.Printf("AlertKafkaMaxMessageBytes err. topic: %s, error: %v", topicName, err)
 			}
 		} else {
 			// create topic
-			err = clusterAdmin.createTopic(topicName)
+			err = clusterAdmin.createTopic(topicName, messageMaxBytesStr)
 			if err != nil {
 				fmt.Printf("CreateTopic err. topic: %s, error: %v", topicName, err)
 			}
@@ -95,17 +97,15 @@ func InitKafka(kafka *KafkaConfig, topicNames []string) error {
 	return nil
 }
 
-func (ac *AdminClient) alertMaxMessageBytes(topic string) error {
-	messageMaxBytes := defaultMessageMaxBytes
+func (ac *AdminClient) alertMaxMessageBytes(topicName, messageMaxBytesStr string) error {
 	configEntries := make(map[string]*string)
-	configEntries["max.message.bytes"] = &messageMaxBytes
-	return ac.Client.AlterConfig(sarama.TopicResource, topic, configEntries, false)
+	configEntries["max.message.bytes"] = &messageMaxBytesStr
+	return ac.Client.AlterConfig(sarama.TopicResource, topicName, configEntries, false)
 }
 
-func (ac *AdminClient) createTopic(topicName string) error {
-	messageMaxBytes := defaultMessageMaxBytes
+func (ac *AdminClient) createTopic(topicName, messageMaxBytesStr string) error {
 	configEntries := make(map[string]*string)
-	configEntries["max.message.bytes"] = &messageMaxBytes
+	configEntries["max.message.bytes"] = &messageMaxBytesStr
 	detail := &sarama.TopicDetail{
 		NumPartitions:     ac.NumPartitions,
 		ReplicationFactor: ac.ReplicationFactor,

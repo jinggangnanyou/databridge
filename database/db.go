@@ -70,7 +70,7 @@ func initDB(logger logger.Interface, opt ...DbOption) (*gorm.DB, error) {
 // 支持其他模块自己进行实例化，如feature_probe
 func connectDB(options DbOptions) (gorm.Dialector, *gorm.Config, error) {
 	var dsn string
-	var dial gorm.Dialector
+	var dialector gorm.Dialector
 	gormConfig := &gorm.Config{
 		DisableForeignKeyConstraintWhenMigrating: options.DisableForeignKeyConstraintWhenMigrating,
 		CreateBatchSize:                          options.CreateBatchSize,
@@ -78,12 +78,12 @@ func connectDB(options DbOptions) (gorm.Dialector, *gorm.Config, error) {
 	switch options.DbType {
 	case "mysql":
 		dsn = getMysqlDsn(options)
-		dial = mysql.Open(dsn)
-		return dial, gormConfig, nil
+		dialector = mysql.Open(dsn)
+		return dialector, gormConfig, nil
 	case "postgres", "postgresql":
 		dsn = getPostgresDsn(options)
-		dial = postgres.Open(dsn)
-		return dial, gormConfig, nil
+		dialector = postgres.Open(dsn)
+		return dialector, gormConfig, nil
 	default:
 		return nil, nil, fmt.Errorf(`unsupported database type: %v`, options.DbType)
 	}

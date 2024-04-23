@@ -1,0 +1,40 @@
+---
+praefect: "127.0.0.1:9999"                  # Gitaly 或者 praefect 服务监听的地址
+database: 
+  adapter: "mysql"                       # `mysql` or `postgres`
+  address: "192.168.111.29" 
+  port: 5432
+  username: "postgres"
+  password: "123456"
+  database: "gitee_code"
+gorm:                                       # 数据库日志等级
+  log_level: 3                              # silent:1,error:2,warn:3,info:4
+  max_idle_conns: 10
+  max_open_conns: 100
+  conn_max_lifetime: 5 #minute
+minio:                                      # minio 配置
+  enabled: true
+  endpoint: "192.168.80.50:16731"
+  access_key_id: "admin@2020"
+  secret_access_key: "admin@2020"
+  use_ssl: false
+redis:
+  sentinel_enable: false
+  default_queue: "ServerTaskQueue"
+  addr: "127.0.0.1:6379"
+  user: ""
+  sentinel_hosts: ""
+  sentinel_port: ""
+  master_name: "go-master"
+  password: ""
+  db: 1
+kafka:
+  client_id: "gitee-code-kafka"
+  max_message_bytes: 0
+  host: "192.168.50.80:8902"
+  sasl_enabled: false
+  sasl_username: ""
+  sasl_password: ""
+  num_partitions: 1
+  replication_factor: 1
+  dial_timeout: 0

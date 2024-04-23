@@ -16,11 +16,8 @@ type RedisConfig struct {
 	SentinelHosts  string `yaml:"sentinel_hosts"`
 	SentinelPort   int    `yaml:"sentinel_port"`
 	MasterName     string `yaml:"master_name"`
-
-	// to use
-	User          string `yaml:"user"`
-	DefaultQueue  string `yaml:"default_queue"`
-	ResultBackend string `yaml:"result_backend"`
+	User           string `yaml:"user"`
+	DefaultQueue   string `yaml:"default_queue"`
 }
 
 // InitRedis InitRedis
