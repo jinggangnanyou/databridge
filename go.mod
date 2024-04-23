@@ -1,4 +1,4 @@
-module github.com/jinggangnanyou/dataorm
+module github.com/jinggangnanyou/databridge
 
 go 1.21
 
