@@ -1,11 +1,14 @@
 package redis
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/go-redis/redis/v8"
+	"github.com/jinggangnanyou/databridge/common"
+	"go.opentelemetry.io/otel"
 )
 
 type RedisConfig struct {
@@ -23,6 +26,11 @@ type RedisConfig struct {
 
 // InitRedis InitRedis
 func InitRedis(cfg *RedisConfig) any {
+	tracer := otel.Tracer(common.ModuleName)
+	_, span := tracer.Start(context.Background(), "init redis")
+	fmt.Printf("trace_id:%s,span_id:%s\n",
+		span.SpanContext().TraceID(), span.SpanContext().SpanID())
+	defer span.End()
 	if cfg.SentinelEnable {
 		return initFailoverClient(cfg)
 	} else if cfg.ClusterEnable {

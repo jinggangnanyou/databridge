@@ -1,12 +1,15 @@
 package kafka
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/IBM/sarama"
+	"github.com/jinggangnanyou/databridge/common"
+	"go.opentelemetry.io/otel"
 )
 
 const (
@@ -64,6 +67,11 @@ func (cf *KafkaConfig) newClusterAdmin() (AdminClient, error) {
 }
 
 func InitKafka(kafka *KafkaConfig, topicNames []string) error {
+	tracer := otel.Tracer(common.ModuleName)
+	_, span := tracer.Start(context.Background(), "init kafka")
+	fmt.Printf("trace_id:%s,span_id:%s\n",
+		span.SpanContext().TraceID(), span.SpanContext().SpanID())
+	defer span.End()
 	messageMaxBytes := defaultMessageMaxBytes // 20MB
 	if kafka.MaxMessageBytes <= 0 {
 		kafka.MaxMessageBytes = messageMaxBytes

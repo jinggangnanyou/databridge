@@ -1,9 +1,12 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"time"
 
+	"github.com/jinggangnanyou/databridge/common"
+	"go.opentelemetry.io/otel"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -31,6 +34,11 @@ type DatabaseConfig struct {
 }
 
 func Connect(logger logger.Interface, dbConfig *DatabaseConfig, gorm *GormConfig) (*gorm.DB, error) {
+	tracer := otel.Tracer(common.ModuleName)
+	_, span := tracer.Start(context.Background(), "init database")
+	fmt.Printf("trace_id:%s,span_id:%s\n",
+		span.SpanContext().TraceID(), span.SpanContext().SpanID())
+	defer span.End()
 	return initDB(logger,
 		SetDbAddr(dbConfig.Address),
 		SetDbUser(dbConfig.Username),
