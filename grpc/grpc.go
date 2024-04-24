@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jinggangnanyou/databridge/common"
+	"databridge/common"
+
 	"go.opentelemetry.io/otel"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

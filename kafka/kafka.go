@@ -7,8 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"databridge/common"
+
 	"github.com/IBM/sarama"
-	"github.com/jinggangnanyou/databridge/common"
 	"go.opentelemetry.io/otel"
 )
 

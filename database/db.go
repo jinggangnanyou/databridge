@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinggangnanyou/databridge/common"
+	"databridge/common"
+
 	"go.opentelemetry.io/otel"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"

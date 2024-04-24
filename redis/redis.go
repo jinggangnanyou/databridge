@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"databridge/common"
+
 	"github.com/go-redis/redis/v8"
-	"github.com/jinggangnanyou/databridge/common"
 	"go.opentelemetry.io/otel"
 )
 

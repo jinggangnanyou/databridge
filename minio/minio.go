@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jinggangnanyou/databridge/common"
+	"databridge/common"
+
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"go.opentelemetry.io/otel"

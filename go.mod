@@ -1,4 +1,4 @@
-module github.com/jinggangnanyou/databridge
+module databridge
 
 go 1.22.2
 
