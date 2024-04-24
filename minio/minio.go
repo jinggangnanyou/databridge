@@ -7,14 +7,9 @@ import (
 	"github.com/minio/minio-go/v7/pkg/credentials"
 )
 
-const (
-	//BucketName BucketName
-	BucketName = "code"
-	//Region Region
-	Region = "cn-north-1"
-)
-
 type MinioConfig struct {
+	BucketName      string `yaml:"bucket_name"`
+	Region          string `yaml:"region"`
 	Enabled         bool   `yaml:"enabled"`
 	Endpoint        string `yaml:"endpoint"`
 	AccessKeyID     string `yaml:"access_key_id"`
@@ -26,17 +21,17 @@ func InitMinioClient(minioConfig *MinioConfig) (*minio.Client, error) {
 	minioClient, err := minio.New(minioConfig.Endpoint, &minio.Options{
 		Creds:  credentials.NewStaticV4(minioConfig.AccessKeyID, minioConfig.SecretAccessKey, ""),
 		Secure: minioConfig.UseSSL,
-		Region: Region,
+		Region: minioConfig.Region,
 	})
 	if err != nil {
 		return nil, err
 	}
-	exists, errBucketExists := minioClient.BucketExists(context.Background(), BucketName)
+	exists, errBucketExists := minioClient.BucketExists(context.Background(), minioConfig.BucketName)
 	if errBucketExists != nil {
 		return nil, errBucketExists
 	}
 	if !exists {
-		err = minioClient.MakeBucket(context.Background(), BucketName, minio.MakeBucketOptions{Region: Region})
+		err = minioClient.MakeBucket(context.Background(), minioConfig.BucketName, minio.MakeBucketOptions{Region: minioConfig.Region})
 		if err != nil {
 			return nil, err
 		}

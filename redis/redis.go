@@ -13,6 +13,7 @@ type RedisConfig struct {
 	User           string `yaml:"user"`
 	Password       string `yaml:"password"`
 	DB             int    `yaml:"db"`
+	ClusterEnable  bool   `yaml:"cluster_enable"`
 	SentinelEnable bool   `yaml:"sentinel_enable"`
 	SentinelHosts  string `yaml:"sentinel_hosts"`
 	SentinelPort   int    `yaml:"sentinel_port"`
@@ -21,12 +22,26 @@ type RedisConfig struct {
 }
 
 // InitRedis InitRedis
-func InitRedis(cfg *RedisConfig) *redis.Client {
+func InitRedis(cfg *RedisConfig) any {
 	if cfg.SentinelEnable {
 		return initFailoverClient(cfg)
+	} else if cfg.ClusterEnable {
+		return initClusterClient(cfg)
 	} else {
 		return initClient(cfg)
 	}
+}
+
+func initClusterClient(cfg *RedisConfig) *redis.ClusterClient {
+	return redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs:        []string{},
+		Username:     cfg.User,
+		Password:     cfg.Password,
+		MinIdleConns: 5,
+		DialTimeout:  5 * time.Second,
+		WriteTimeout: 5 * time.Second,
+		PoolTimeout:  5 * time.Second,
+	})
 }
 
 func initClient(cfg *RedisConfig) *redis.Client {
@@ -39,7 +54,6 @@ func initClient(cfg *RedisConfig) *redis.Client {
 		DialTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Second,
 		PoolTimeout:  5 * time.Second,
-		MaxConnAge:   0,
 	})
 }
 
@@ -58,6 +72,5 @@ func initFailoverClient(cfg *RedisConfig) *redis.Client {
 		DialTimeout:   5 * time.Second,
 		WriteTimeout:  5 * time.Second,
 		PoolTimeout:   5 * time.Second,
-		MaxConnAge:    0,
 	})
 }
