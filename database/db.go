@@ -35,6 +35,7 @@ type DatabaseConfig struct {
 	Port           int    `yaml:"port"`
 	Database       string `yaml:"database"`
 	FeatureProbeDB string `yaml:"feature_probe_db" json:"feature_probe_db"`
+	WalleDB        string `yaml:"walle_db"`
 }
 
 func Connect(logger logger.Interface, dbConfig *DatabaseConfig, gorm *GormConfig) (*gorm.DB, error) {

@@ -27,7 +27,9 @@ type KafkaConfig struct {
 	SaslEnabled       bool   `yaml:"sasl_enabled"`
 	SaslUsername      string `yaml:"sasl_username"`
 	SaslPassword      string `yaml:"sasl_password"`
+	SaslProtocol      string `yaml:"sasl_protocol"`
 	NumPartitions     int32  `yaml:"num_partitions"`
+	CanNotAlterTopic  bool   `yaml:"can_not_alter_topic"`
 	ReplicationFactor int16  `yaml:"replication_factor"`
 	DialTimeout       int64  `yaml:"dial_timeout"` // 方便本地开发，连不上时快速启动
 }
