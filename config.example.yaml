@@ -19,6 +19,8 @@ minio:                                      # minio 配置
   secret_access_key: "admin@2020"
   use_ssl: false
 redis:
+  cluster_enable: false
+  cluster_addrs: "127.0.0.1:6379,127.0.0.2:6379"
   sentinel_enable: false
   default_queue: "ServerTaskQueue"
   addr: "127.0.0.1:6379"

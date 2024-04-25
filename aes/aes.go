@@ -9,7 +9,12 @@ import (
 	"io"
 )
 
+const AESKey = "g-oschina@2024-o"
+
 func Encrypt(key []byte, text string) (string, error) {
+	if len(key) == 0 {
+		key = []byte(AESKey)
+	}
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return "", err
@@ -29,6 +34,9 @@ func Encrypt(key []byte, text string) (string, error) {
 }
 
 func Decrypt(key []byte, text string) (string, error) {
+	if len(key) == 0 {
+		key = []byte(AESKey)
+	}
 	ciphertext, err := base64.URLEncoding.DecodeString(text)
 	if err != nil {
 		return "", err
@@ -50,4 +58,14 @@ func Decrypt(key []byte, text string) (string, error) {
 	cfb.XORKeyStream(ciphertext, ciphertext)
 
 	return string(ciphertext), nil
+}
+
+func GetPlainPassword(key []byte, text string) string {
+	p, err := Decrypt(key, text)
+	if err != nil {
+		fmt.Printf("decrypt password fail\n")
+		return text
+	} else {
+		return p
+	}
 }

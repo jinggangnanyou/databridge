@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"databridge/aes"
 	"databridge/common"
 	"databridge/log"
 
@@ -20,6 +21,7 @@ type RedisConfig struct {
 	Password       string `yaml:"password"`
 	DB             int    `yaml:"db"`
 	ClusterEnable  bool   `yaml:"cluster_enable"`
+	ClusterAddrs   string `yaml:"cluster_addrs"`
 	SentinelEnable bool   `yaml:"sentinel_enable"`
 	SentinelHosts  string `yaml:"sentinel_hosts"`
 	SentinelPort   int    `yaml:"sentinel_port"`
@@ -51,9 +53,9 @@ func InitRedis(cfg *RedisConfig) any {
 
 func initClusterClient(cfg *RedisConfig) *redis.ClusterClient {
 	return redis.NewClusterClient(&redis.ClusterOptions{
-		Addrs:        []string{},
+		Addrs:        strings.Split(cfg.ClusterAddrs, ","),
 		Username:     cfg.User,
-		Password:     cfg.Password,
+		Password:     aes.GetPlainPassword([]byte{}, cfg.Password),
 		MinIdleConns: 5,
 		DialTimeout:  5 * time.Second,
 		WriteTimeout: 5 * time.Second,
@@ -65,7 +67,7 @@ func initClient(cfg *RedisConfig) *redis.Client {
 	return redis.NewClient(&redis.Options{
 		Addr:         cfg.Addr,
 		Username:     cfg.User,
-		Password:     cfg.Password,
+		Password:     aes.GetPlainPassword([]byte{}, cfg.Password),
 		DB:           cfg.DB,
 		MinIdleConns: 5,
 		DialTimeout:  5 * time.Second,
@@ -83,7 +85,7 @@ func initFailoverClient(cfg *RedisConfig) *redis.Client {
 		MasterName:    cfg.MasterName,
 		SentinelAddrs: sentinelAddr,
 		Username:      cfg.User,
-		Password:      cfg.Password,
+		Password:      aes.GetPlainPassword([]byte{}, cfg.Password),
 		DB:            cfg.DB,
 		MinIdleConns:  5,
 		DialTimeout:   5 * time.Second,

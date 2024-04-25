@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"databridge/aes"
 	"databridge/common"
 	"databridge/log"
 
@@ -51,7 +52,7 @@ func Connect(logger logger.Interface, dbConfig *DatabaseConfig, gorm *GormConfig
 	return initDB(logger,
 		SetDbAddr(dbConfig.Address),
 		SetDbUser(dbConfig.Username),
-		SetDbPwd(dbConfig.Password),
+		SetDbPwd(aes.GetPlainPassword([]byte{}, dbConfig.Password)),
 		SetPort(dbConfig.Port),
 		SetDbType(dbConfig.Adapter),
 		SetDbName(dbConfig.Database),

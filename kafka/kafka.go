@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"databridge/aes"
 	"databridge/common"
 	"databridge/log"
 
@@ -47,7 +48,7 @@ func (cf *KafkaConfig) newConfig() *sarama.Config {
 	if cf.SaslEnabled {
 		config.Net.SASL.Enable = true
 		config.Net.SASL.User = cf.SaslUsername
-		config.Net.SASL.Password = cf.SaslPassword
+		config.Net.SASL.Password = aes.GetPlainPassword([]byte{}, cf.SaslPassword)
 		config.Net.SASL.Mechanism = sarama.SASLTypePlaintext
 	}
 	if cf.DialTimeout != 0 {
