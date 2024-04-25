@@ -8,9 +8,11 @@ import (
 	"time"
 
 	"databridge/common"
+	"databridge/log"
 
 	"github.com/IBM/sarama"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
 
 const (
@@ -69,7 +71,13 @@ func (cf *KafkaConfig) newClusterAdmin() (AdminClient, error) {
 
 func InitKafka(kafka *KafkaConfig, topicNames []string) error {
 	tracer := otel.Tracer(common.ModuleName)
-	_, span := tracer.Start(context.Background(), "init kafka")
+	olog := &log.OTELLog{
+		Type:    log.LogTypeServer,
+		Level:   log.InfoLevel,
+		Message: "init kafka",
+	}
+	_, span := tracer.Start(context.Background(), "init kafka",
+		trace.WithAttributes(olog.MakeupLogAttr()))
 	fmt.Printf("trace_id:%s,span_id:%s\n",
 		span.SpanContext().TraceID(), span.SpanContext().SpanID())
 	defer span.End()

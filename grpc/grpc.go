@@ -5,8 +5,10 @@ import (
 	"fmt"
 
 	"databridge/common"
+	"databridge/log"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -39,7 +41,13 @@ func InitGrpc(grpcAddr string) error {
 
 func (g *GrpcConn) Get(c context.Context) (*grpc.ClientConn, error) {
 	tracer := otel.Tracer("code-go-api")
-	_, span := tracer.Start(c, "get grpc client")
+	olog := &log.OTELLog{
+		Type:    log.LogTypeServer,
+		Level:   log.InfoLevel,
+		Message: "get grpc client",
+	}
+	_, span := tracer.Start(c, "get grpc client",
+		trace.WithAttributes(olog.MakeupLogAttr()))
 	fmt.Printf("trace_id:%s,span_id:%s\n",
 		span.SpanContext().TraceID(), span.SpanContext().SpanID())
 	defer span.End()

@@ -7,9 +7,11 @@ import (
 	"time"
 
 	"databridge/common"
+	"databridge/log"
 
 	"github.com/go-redis/redis/v8"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type RedisConfig struct {
@@ -28,7 +30,13 @@ type RedisConfig struct {
 // InitRedis InitRedis
 func InitRedis(cfg *RedisConfig) any {
 	tracer := otel.Tracer(common.ModuleName)
-	_, span := tracer.Start(context.Background(), "init redis")
+	olog := &log.OTELLog{
+		Type:    log.LogTypeServer,
+		Level:   log.InfoLevel,
+		Message: "init redis",
+	}
+	_, span := tracer.Start(context.Background(), "init redis",
+		trace.WithAttributes(olog.MakeupLogAttr()))
 	fmt.Printf("trace_id:%s,span_id:%s\n",
 		span.SpanContext().TraceID(), span.SpanContext().SpanID())
 	defer span.End()

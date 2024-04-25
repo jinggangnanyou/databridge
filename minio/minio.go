@@ -5,10 +5,12 @@ import (
 	"fmt"
 
 	"databridge/common"
+	"databridge/log"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 )
 
 type MinioConfig struct {
@@ -23,7 +25,13 @@ type MinioConfig struct {
 
 func InitMinioClient(minioConfig *MinioConfig) (*minio.Client, error) {
 	tracer := otel.Tracer(common.ModuleName)
-	_, span := tracer.Start(context.Background(), "init minio")
+	olog := &log.OTELLog{
+		Type:    log.LogTypeServer,
+		Level:   log.InfoLevel,
+		Message: "init minio",
+	}
+	_, span := tracer.Start(context.Background(), "init minio",
+		trace.WithAttributes(olog.MakeupLogAttr()))
 	fmt.Printf("trace_id:%s,span_id:%s\n",
 		span.SpanContext().TraceID(), span.SpanContext().SpanID())
 	defer span.End()
