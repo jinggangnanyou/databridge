@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"databridge/common"
-	"databridge/log"
+	"code.gitee.cn/databridge/common"
+	"code.gitee.cn/databridge/log"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"

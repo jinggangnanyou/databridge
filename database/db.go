@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"databridge/aes"
-	"databridge/common"
-	"databridge/log"
+	"code.gitee.cn/databridge/aes"
+	"code.gitee.cn/databridge/common"
+	"code.gitee.cn/databridge/log"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"

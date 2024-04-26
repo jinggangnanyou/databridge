@@ -1,4 +1,4 @@
-module databridge
+module code.gitee.cn/databridge
 
 go 1.20
 

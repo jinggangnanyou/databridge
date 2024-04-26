@@ -1,9 +1,10 @@
 package log
 
 import (
-	"databridge/common"
 	"encoding/json"
 	"time"
+
+	"code.gitee.cn/databridge/common"
 
 	"go.opentelemetry.io/otel/attribute"
 )

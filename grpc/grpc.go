@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"databridge/common"
-	"databridge/log"
+	"code.gitee.cn/databridge/common"
+	"code.gitee.cn/databridge/log"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
