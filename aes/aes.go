@@ -7,9 +7,13 @@ import (
 	"encoding/base64"
 	"fmt"
 	"io"
+	"strings"
 )
 
-const AESKey = "g-oschina@2024-o"
+const (
+	AESKey    = "OSC@GiteeCodeAES"
+	AESPrefix = "{AES}"
+)
 
 func Encrypt(key []byte, text string) (string, error) {
 	if len(key) == 0 {
@@ -61,6 +65,9 @@ func Decrypt(key []byte, text string) (string, error) {
 }
 
 func GetPlainPassword(key []byte, text string) string {
+	if !strings.HasPrefix(text, AESPrefix) {
+		return text
+	}
 	p, err := Decrypt(key, text)
 	if err != nil {
 		fmt.Printf("decrypt password fail\n")

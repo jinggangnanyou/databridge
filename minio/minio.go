@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"code.gitee.cn/databridge/aes"
 	"code.gitee.cn/databridge/common"
 	"code.gitee.cn/databridge/log"
 
@@ -36,7 +37,7 @@ func InitMinioClient(minioConfig *MinioConfig) (*minio.Client, error) {
 		span.SpanContext().TraceID(), span.SpanContext().SpanID())
 	defer span.End()
 	minioClient, err := minio.New(minioConfig.Endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(minioConfig.AccessKeyID, minioConfig.SecretAccessKey, ""),
+		Creds:  credentials.NewStaticV4(minioConfig.AccessKeyID, aes.GetPlainPassword([]byte{}, minioConfig.SecretAccessKey), ""),
 		Secure: minioConfig.UseSSL,
 		Region: minioConfig.Region,
 	})
